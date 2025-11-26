@@ -1,0 +1,18 @@
+{
+    "shortDescription": "Internationalization (i18n) plugin for Wheels",
+    "keywords": "cfwheels,wheels,plugin,translation,localization",
+    "private": false,
+    "version": "1.0.0",
+    "slug": "wheels-i18n",
+    "name": "wheels-i18n",
+    "type": "cfwheels-plugins",
+    "author": "wheels-dev",
+    "directory":"/plugins/",
+    "packageDirectory": "i18n",
+    "homepage": "https://github.com/zainforbjs/wheels-i18n",
+    "Bugs" : "https://github.com/zainforbjs/wheels-i18n/issues",
+    "Repository" : { 
+        "type" : "git", 
+        "URL" : "https://github.com/zainforbjs/wheels-i18n"
+    }
+}
