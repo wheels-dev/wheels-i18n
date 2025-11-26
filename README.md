@@ -1,10 +1,10 @@
 # wheels-i18n
 
-A lightweight and flexible localization (i18n) plugin for **CFWheels 3.x**, providing an easy way to manage translations, locales, and multi-language support.
+A lightweight and flexible localization (i18n) plugin for **Wheels 3.x**, providing an easy way to manage translations, locales, and multi-language support.
 
 ### This plugin adds:
 
-- Simple translation helper (t())
+- Simple translation helpers (t(), tp())
 - Automatic locale detection & switching
 - JSON-based translation files
 - Fallback locale support
@@ -69,6 +69,11 @@ Example: `/app/locales/en/common.json`
 {
   "welcome": "Welcome to our application",
   "greeting": "Hello, {name}!",
+  "posts": {
+    "zero": "No Post Found",
+    "one": "{count} Post Found", 
+    "other": "{count} Posts Found" 
+  },
   "buttons": {
     "save": "Save",
     "cancel": "Cancel"
@@ -82,6 +87,11 @@ Example: `/app/locales/es/common.json`
 {
   "welcome": "Bienvenido a nuestra aplicación",
   "greeting": "¡Hola, {name}!",
+  "posts": {
+    "zero": "No se encontraron publicaciones",
+    "one": "{count} publicación encontrada",
+    "other": "{count} publicaciones encontradas"
+  },
   "buttons": {
     "save": "Guardar",
     "cancel": "Cancelar",
@@ -92,7 +102,16 @@ Example: `/app/locales/es/common.json`
 
 ```cfml
 // Translate a key from the default or active locale
-writeOutput( t("welcome.message") );
+writeOutput( t("welcome.message") );      // Output: Welcome to our application
+```
+
+### Pluralization Example
+
+```cfml
+// Translate a key for pluralized terms from the default locale
+writeOutput( tp(key="common.posts", count=0) );     // Output: No Post Found
+writeOutput( tp(key="common.posts", count=1) );     // Output: 1 Post Found
+writeOutput( tp(key="common.posts", count=5) );     // Output: 5 Posts Found
 ```
 
 ### Change Locale
@@ -120,17 +139,6 @@ result = availableLocales("test");
 - `changeLocale( locale )` – Set active locale
 - `currentLocale()` – Get active locale
 - `availableLocales()` – Returns available locales
-
-## Development
-
-Clone the plugin into your `plugins/` folder or use a symlink for live development.
-
-## Publishing to ForgeBox
-
-```bash
-box login
-box publish
-```
 
 ## License
 
