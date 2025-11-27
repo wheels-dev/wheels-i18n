@@ -25,6 +25,9 @@ component hint="wheels-i18n" output="false" mixin="global" {
         if (!structKeyExists(application[local.appKey], "i18n_fallbackLocale")) {
             application.wo.set(i18n_fallbackLocale="en");
         }
+        if (!structKeyExists(application[local.appKey], "i18n_translationSource")) {
+            application.wo.set(i18n_translationSource="json"); // json or database
+        }
         if (!structKeyExists(application[local.appKey], "i18n_translationsPath")) {
             application.wo.set(i18n_translationsPath="/app/locales");
         }
@@ -38,11 +41,13 @@ component hint="wheels-i18n" output="false" mixin="global" {
         local.appKey = application.wo.$appKey();
         // Initialize the service and store it in application scope
         application[local.appKey].i18n = createObject("component", "plugins.I18n.lib.LocalizationService").init(
-            translationsPath  = application.wo.get("i18n_translationsPath"),
             availableLocales  = application.wo.get("i18n_availableLocales"),
-            defaultLocale     = application.wo.get("i18n_defaultLocale"),
-            fallbackLocale    = application.wo.get("i18n_fallbackLocale"),
-            cacheTranslations = application.wo.get("i18n_cacheTranslations")
+            translationsPath    = application.wo.get("i18n_translationsPath"),
+            availableLocales    = application.wo.get("i18n_availableLocales"),
+            defaultLocale       = application.wo.get("i18n_defaultLocale"),
+            fallbackLocale      = application.wo.get("i18n_fallbackLocale"),
+            translationSource   = application.wo.get("i18n_translationSource"),
+            cacheTranslations   = application.wo.get("i18n_cacheTranslations")
         );
 
         // Perform initial load of translation files

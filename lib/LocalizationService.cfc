@@ -8,66 +8,78 @@ component output="false" {
         required string availableLocales,
         required string defaultLocale,
         required string fallbackLocale,
-        required boolean cacheTranslations
+        required boolean cacheTranslations,
+        required string translationSource = "json"
     ) {
         variables.config = arguments;
         return this;
     }
 
-    /**
-     * Scans the directories and loads JSON files into memory
-     */
     public void function loadTranslations() {
-        // If caching is on and we already have data, exit
-        if (variables.config.cacheTranslations && !structIsEmpty(variables.translations)) {
-            return;
+        // Always reload if cache is off
+        if (!variables.config.cacheTranslations || structIsEmpty(variables.translations)) {
+            variables.translations = {};
+
+            if (variables.config.translationSource == "database") {
+                loadFromDatabase();
+            } else {
+                loadFromJson();
+            }
         }
+    }
 
-        // Reset translations
-        variables.translations = {};
-        
-        var local = {};
-        local.localesList = listToArray(variables.config.availableLocales);
-        local.basePath = expandPath(variables.config.translationsPath);
+    // Load from JSON files (your original logic)
+    private void function loadFromJson() {
+        var locales = listToArray(variables.config.availableLocales);
+        var basePath = expandPath(variables.config.translationsPath);
 
-        // Loop through defined locales (e.g., 'en', 'es')
-        for (local.loc in local.localesList) {
-            variables.translations[local.loc] = {};
-            
-            local.localeDir = local.basePath & "/" & local.loc;
+        for (var loc in locales) {
+            variables.translations[loc] = {};
 
-            if (directoryExists(local.localeDir)) {
-                // Find all .json files in this locale's folder
-                local.files = directoryList(local.localeDir, false, "name", "*.json");
-
-                for (local.file in local.files) {
-                    local.fileContent = fileRead(local.localeDir & "/" & local.file, "utf-8");
-                    
-                    if (isJSON(local.fileContent)) {
-                        local.jsonData = deserializeJSON(local.fileContent);
-                        
-                        // Get the namespace from filename (e.g., 'common.json' -> 'common')
-                        local.namespace = listFirst(local.file, ".");
-                        
-                        // Flatten and store keys
-                        flattenAndStore(local.loc, local.namespace, local.jsonData);
+            var localeDir = basePath & "/" & loc;
+            if (directoryExists(localeDir)) {
+                var files = directoryList(localeDir, false, "name", "*.json");
+                for (var file in files) {
+                    var content = fileRead(localeDir & "/" & file, "utf-8");
+                    if (isJSON(content)) {
+                        var data = deserializeJSON(content);
+                        var namespace = listFirst(file, ".");
+                        flattenAndStore(loc, namespace, data);
                     }
                 }
             }
         }
     }
 
-    /**
-     * Retrieves a specific key for a specific locale
-     */
+    // Load from Database
+    private void function loadFromDatabase() {
+        var locales = listToArray(variables.config.availableLocales);
+
+        var sql = "
+            SELECT locale, translation_key, translation_value
+            FROM i18n_translations
+            WHERE locale IN (?)
+        ";
+
+        var q = queryExecute(
+            sql,
+            [locales],
+            { datasource: application.$wheels.dataSourceName }
+        );
+
+        for (var row in q) {
+            variables.translations[row.locale] = variables.translations[row.locale] ?: {};
+            variables.translations[row.locale][row.translation_key] = row.translation_value;
+        }
+    }
+
     public string function getTranslation(required string locale, required string key) {
-        // Reload if caching is disabled (for development)
         if (!variables.config.cacheTranslations) {
             loadTranslations();
         }
 
         if (
-            structKeyExists(variables.translations, arguments.locale) && 
+            structKeyExists(variables.translations, arguments.locale) &&
             structKeyExists(variables.translations[arguments.locale], arguments.key)
         ) {
             return variables.translations[arguments.locale][arguments.key];
@@ -76,26 +88,31 @@ component output="false" {
         return "";
     }
 
-    /**
-     * Private helper: Recursive function to flatten JSON
-     * Turns { "nav": { "home": "Home" } } into "nav.home" = "Home"
-     */
-    private void function flattenAndStore(
-        required string locale, 
-        required string prefix, 
-        required struct data
-    ) {
-        for (var key in arguments.data) {
-            var fullKey = arguments.prefix & "." & key;
-            var value = arguments.data[key];
+    // Your original flatten helper
+    private void function flattenAndStore(required string locale, required string prefix, required struct data) {
+        for (var key in data) {
+            var fullKey = prefix & "." & key;
+            var value = data[key];
 
             if (isStruct(value)) {
-                // Recurse deeper
-                flattenAndStore(arguments.locale, fullKey, value);
+                flattenAndStore(locale, fullKey, value);
             } else if (isSimpleValue(value)) {
-                // Store value
-                variables.translations[arguments.locale][fullKey] = value;
+                variables.translations[locale][fullKey] = value;
             }
         }
+    }
+
+    // Optional: Allow live updates from admin panel
+    public void function setTranslation(required string locale, required string key, required string value) {
+        variables.translations[locale] = variables.translations[locale] ?: {};
+        variables.translations[locale][key] = value;
+
+        queryExecute(
+            "INSERT INTO i18n_translations (locale, translation_key, translation_value)
+             VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE translation_value = ?",
+            [locale, key, value, value],
+            { datasource: application.$wheels.dataSourceName }
+        );
     }
 }

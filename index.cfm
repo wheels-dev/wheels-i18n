@@ -1,83 +1,42 @@
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        color: #222;
-    }
-    h1, h3, h4 {
-        color: #333;
-        margin-top: 32px;
-    }
-    h1 {
-        font-size: 32px;
-        margin-bottom: 10px;
-        border-bottom: 3px solid #eee;
-        padding-bottom: 10px;
-    }
-    p {
-        margin: 10px 0 18px 0;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 15px 0;
-        font-size: 14px;
-    }
-    table thead {
-        background: #f7f7f7;
-        border-bottom: 2px solid #ddd;
-    }
-    table th, table td {
-        padding: 10px;
-        border: 1px solid #e1e1e1;
-        text-align: left;
-    }
-    code {
-        background: #f3f3f3;
-        padding: 3px 6px;
-        border-radius: 4px;
-        font-size: 90%;
-    }
-    pre {
-        background: #f8f8f8;
-        padding: 12px;
-        border-radius: 6px;
-        overflow-x: auto;
-        border: 1px solid #e1e1e1;
-    }
-    ul {
-        margin: 10px 0;
-        padding-left: 20px;
-    }
-    hr {
-        margin: 30px 0;
-        border: none;
-        border-bottom: 1px solid #eee;
-    }
+    body {font-family: "Segoe UI", Arial, sans-serif; line-height: 1.7; color: #222; max-width: 900px; margin: 40px auto; padding: 20px; background: #fdfdfd;}
+    h1, h3, h4 {color: #1976d2;}
+    h1 {font-size: 36px; border-bottom: 4px solid #eee; padding-bottom: 15px;}
+    h2 {color: #333; border-bottom: 2px solid #2196F3; padding-bottom: 8px;}
+    code {background: #f0f7ff; padding: 3px 8px; border-radius: 4px; font-size: 92%; color: #d63384;}
+    pre {background: #f8f9fa; padding: 16px; border-radius: 8px; overflow-x: auto; border: 1px solid #e0e0e0; font-size: 14px;}
+    .highlight {background: #e8f5e8; padding: 16px; border-left: 5px solid #4caf50; border-radius: 0 8px 8px 0; margin: 20px 0;}
+    .pro {background: #fff8e1; padding: 16px; border-left: 5px solid #ff9800; border-radius: 0 8px 8px 0; margin: 25px 0;}
+    .note {background: #e3f2fd; padding: 14px; border-left: 4px solid #1976d2; margin: 20px 0; border-radius: 4px;}
+    table {width: 100%; border-collapse: collapse; margin: 20px 0;}
+    th, td {padding: 12px; border: 1px solid #ddd; text-align: left;}
+    th {background: #f5f5f5;}
+    hr {border: none; height: 1px; background: #ddd; margin: 20px 0;}
+    ul {padding-left: 20px;}
+    a {color: #1976d2; text-decoration: none;}
+    a:hover {text-decoration: underline;}
 </style>
 
-<h1>wheels-i18n: Localization Plugin</h1>
-<p>
-    Internationalization (i18n) and localization plugin for Wheels, providing easy-to-use functions for translating content,
-    managing locales, and locale-based configuration.
-</p>
+<h1>wheels-i18n v1.0.0</h1>
+<p><strong>The simplest, fastest, and most powerful internationalization plugin for Wheels.</strong></p>
 
 <hr>
 
-<h3>Installation</h3>
-<pre>
-wheels plugin install wheels-i18n
-</pre>
+<h2>Installation</h2>
+<pre>wheels plugins install wheels-i18n</pre>
 
 <hr>
 
-<h3>Configuration Settings</h3>
+<h2>Translation via JSON File</h2>
+
+<h3>Step 1: Configuration Settings</h3>
 <p>Add the following configuration settings inside your application's <code>config/settings.cfm</code> file:</p>
 
 <pre>
 set(i18n_defaultLocale="en");
 set(i18n_availableLocales="en,es");
 set(i18n_fallbackLocale="en");
+set(i18n_translationSource = "json");
 set(i18n_translationsPath="/app/locales");
 set(i18n_cacheTranslations=false); // Set to true in production
 </pre>
@@ -109,9 +68,14 @@ set(i18n_cacheTranslations=false); // Set to true in production
             <td>The locale to fall back to if a translation is missing in the current locale.</td>
         </tr>
         <tr>
+            <td><strong>i18n_translationSource</strong></td>
+            <td><code>"json"</code></td>
+            <td>The method that will be used for locales (<code>"json/database"</code>).</td>
+        </tr>
+        <tr>
             <td><strong>i18n_translationsPath</strong></td>
             <td><code>"/app/locales"</code></td>
-            <td>The path where translation JSON files are stored.</td>
+            <td>The path where JSON files are stored for translation.</td>
         </tr>
         <tr>
             <td><strong>i18n_cacheTranslations</strong></td>
@@ -121,102 +85,155 @@ set(i18n_cacheTranslations=false); // Set to true in production
     </tbody>
 </table>
 
+<div class="note">
+    <strong>Pro Tip:</strong> Set <code>i18n_cacheTranslations=true</code> in production for fast performance.
+</div>
+
 <hr>
 
-<h3>Translation Files (<code>/app/locales</code>)</h3>
-
-<p>Translations are organized into folders by locale. Each locale contains one or more JSON files (e.g., <code>common.json</code>) that store translation keys and values.</p>
-
+<h3>Step 2: Add Your First Translation</h3>
+<p>Create this file: <code>/app/locales/en/common.json</code></p>
 <pre>
-/app
-    /locales
-        /en
-            common.json
-        /es
-            common.json
-</pre>
-
-<h4><code>/app/locales/en/common.json</code></h4>
-<pre>{
-  "welcome": "Welcome to our application",
-  "greeting": "Hello, {name}!",
-  "goodbye": "Goodbye",
-  "nav": {
-    "home": "Home",
-    "about": "About Us",
-    "contact": "Contact",
-    "dashboard": "Dashboard"
-  },
-  "buttons": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "view": "View",
-    "new": "New",
-    "back": "Back"
-  },
+{
+  "welcome": "Welcome to my app!",
+  "hello": "Hello, {name}!",
+  "save": "Save",
   "posts": {
     "zero": "No Post Found",
     "one": "{count} Post Found", 
     "other": "{count} Posts Found" 
   },
-  "messages": {
-    "success": "Operation completed successfully",
-    "error": "An error occurred",
-    "loading": "Loading...",
-    "no_results": "No results found"
-  },
-  "actions": "Actions",
-  "confirm_delete": "Are you sure you want to delete this?"
 }
 </pre>
-
-<h4><code>/app/locales/es/common.json</code></h4>
-<pre>{
+<p>Same structure file for different language e.g: <code>/app/locales/es/common.json</code></p>
+<pre>
+{
   "welcome": "Bienvenido a nuestra aplicación",
-  "greeting": "¡Hola, {name}!",
-  "goodbye": "Adiós",
-  "nav": {
-    "home": "Inicio",
-    "about": "Sobre Nosotros",
-    "contact": "Contacto",
-    "dashboard": "Panel de Control"
-  },
-  "buttons": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
-    "delete": "Eliminar",
-    "edit": "Editar",
-    "view": "Ver",
-    "new": "Nuevo",
-    "back": "Volver"
-  },
+  "hello": "¡Hola, {name}!",
+  "save": "Guardar",
   "posts": {
     "zero": "No se encontraron publicaciones",
     "one": "{count} publicación encontrada",
     "other": "{count} publicaciones encontradas"
   },
-  "messages": {
-    "success": "Operación completada exitosamente",
-    "error": "Ocurrió un error",
-    "loading": "Cargando...",
-    "no_results": "No se encontraron resultados"
-  },
-  "actions": "Acciones",
-  "confirm_delete": "¿Estás seguro de que quieres eliminar esto?"
 }
 </pre>
 
 <hr>
 
-<h3>Functions Reference</h3>
+<h3>Step 3: Use It Anywhere</h3>
+<pre>
+#t("common.welcome")#
+#t("common.hello", name="Sarah")#
+#tp("common.posts", count=5)#
+</pre>
+
+<p>You're done!</p>
+
+<hr>
+
+<h3>Folder Structure</h3>
+<pre>
+/app/locales/
+    /en/
+        common.json
+        forms.json
+    /es/
+        common.json
+        forms.json
+</pre>
+
+<hr>
+
+<h2>Translation via Database</h2>
+
+<h3>Step 1: Configuration Settings</h3>
+<p>Add the following configuration settings inside your application's <code>config/settings.cfm</code> file:</p>
+
+<pre>
+set(i18n_defaultLocale="en");
+set(i18n_availableLocales="en,es");
+set(i18n_fallbackLocale="en");
+set(i18n_translationSource = "database");
+set(i18n_cacheTranslations=false); // Set to true in production
+</pre>
+
+<hr>
+
+<h3>Step 2: Create the Translations Table</h3>
+
+<p>Create the database table using a standard CFWheels migration:</p>
+
+<h4>Run once:</h4>
+<pre>
+wheels dbmigrate create table i18n_translations
+</pre>
+
+<p>Then replace the generated file with this content:</p>
+
+<pre>
+// app/migrator/migrations/XXXX_cli_create_table_i18n_translations.cfc
+component {
+
+    function up() {
+        createTable(name="i18n_translations", primaryKey="id") {
+            addColumn(type="integer", autoIncrement=true);
+            addColumn(name="locale", type="string", limit=10, null=false);
+            addColumn(name="translation_key", type="string", limit=255, null=false);
+            addColumn(name="translation_value", type="text", null=false);
+            addColumn(name="created_at", type="datetime");
+            addColumn(name="updated_at", type="datetime");
+
+            addIndex(columns="locale,translation_key", unique=true);
+        }
+    }
+
+    function down() {
+        dropTable("i18n_translations");
+    }
+
+}
+</pre>
+
+<p>Finally run:</p>
+<pre>
+wheels dbmigrate latest
+</pre>
+
+<p>That’s it — your database is ready for translation.</p>
+
+<hr>
+
+<h3>Step 3: Use It Anywhere</h3>
+<pre>
+#t("common.welcome")#
+#t("common.hello", name="Sarah")#
+#tp("common.posts", count=5)#
+</pre>
+
+<p>You're done!</p>
+
+<h4>(Optional) Add Admin Panel</h4>
+<p>Want translators or clients to edit translations live in the browser?</p>
+<p>You can easily build your own admin area using standard Wheels tools:</p>
 <ul>
-    <li><strong>t(required key, [params])</strong> – Translate key for current locale.</li>
-    <li><strong>tp(required key, required count, [params])</strong> – Translate and pluralize key based on count.</li>
-    <li><strong>currentLocale()</strong> – Returns the active locale.</li>
-    <li><strong>changeLocale(required lang)</strong> – Sets session locale.</li>
-    <li><strong>availableLocales()</strong> – Returns list of allowed languages.</li>
+    <li>Create a simple <strong>model</strong> mapped to the <code>i18n_translations</code> table</li>
+    <li>Add a <strong>controller</strong> with <code>index</code> and <code>save</code> actions</li>
+    <li>Build a clean <strong>view</strong> with a form (locale + key + value)</li>
+</ul>
+<p>That’s it — your translators can now update text instantly.</p>
+<p><em>Many agencies love this workflow. You’re in full control — build it exactly how you want.</em></p>
+
+<hr>
+
+<h2>Plugin Functions (Work in Both JSON & Database Mode)</h2>
+<ul>
+    <li><code>#t("key")#</code> → Translate</li>
+    <li><code>#t("key", name="John")#</code> → With variables</li>
+    <li><code>#tp("key", count=5)#</code> → Pluralization (.zero, .one, .other)</li>
+    <li><code>#currentLocale()#</code> → Get current language</li>
+    <li><code>#changeLocale("es")#</code> → Switch language</li>
+    <li><code>#availableLocales()#</code> → Array of supported languages</li>
 </ul>
 
 <hr>
@@ -242,9 +259,7 @@ set(i18n_cacheTranslations=false); // Set to true in production
 
 <pre>
 // Singular usage (Count = 1) #tp(key="common.posts", count=1)# // Result: "1 Post Found"
-
 // Plural usage (Count > 1) #tp(key="common.posts", count=5)# // Result: "5 Posts Found"
-
 // Zero usage (Count = 0) #tp(key="common.posts", count=0)# // Result: "0 Posts Found" 
 </pre>
 
@@ -275,11 +290,10 @@ locales = availableLocales(); // ["en", "es", "fr"]
 
 <hr>
 
-<h3>Author</h3>
-<p>wheels-dev</p>
+<p>This is the <strong>only i18n plugin</strong> you'll ever need for Wheels.</p>
 
-<h3>Wheels Version</h3>
-<p>3.0.0</p>
-
-<h3>License</h3>
-<p>MIT</p>
+<div class="highlight">
+    Made with love by <strong>wheels-dev</strong><br>
+    MIT License • Works with Wheels 3.0+<br>
+    GitHub: <a href="https://github.com/zainforbjs/wheels-i18n">github.com/zainforbjs/wheels-i18n</a>
+</div>
