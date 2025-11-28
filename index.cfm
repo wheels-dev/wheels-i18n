@@ -1,5 +1,5 @@
 <style>
-    body {font-family: "Segoe UI", Arial, sans-serif; line-height: 1.7; color: #222; max-width: 900px; margin: 40px auto; padding: 20px; background: #fdfdfd;}
+    body {font-family: "Segoe UI", Arial, sans-serif; line-height: 1.7; color: #222; background: #fdfdfd;}
     h1, h3, h4 {color: #1976d2;}
     h1 {font-size: 36px; border-bottom: 4px solid #eee; padding-bottom: 15px;}
     h2 {color: #333; border-bottom: 2px solid #2196F3; padding-bottom: 8px;}
@@ -124,7 +124,7 @@ set(i18n_cacheTranslations=false); // Set to true in production
 <h3>Step 3: Use It Anywhere</h3>
 <pre>
 #t("common.welcome")#
-#t("common.hello", name="Sarah")#
+#t("common.greeting", name="Sarah")#
 #tp("common.posts", count=5)#
 </pre>
 
@@ -162,9 +162,9 @@ set(i18n_cacheTranslations=false); // Set to true in production
 
 <h3>Step 2: Create the Translations Table</h3>
 
-<p>Create the database table using a standard CFWheels migration:</p>
+<p>Create the database table using a standard Wheels migration:</p>
 
-<h4>Run once:</h4>
+<h4>Run the command in CLI:</h4>
 <pre>
 wheels dbmigrate create table i18n_translations
 </pre>
@@ -176,16 +176,15 @@ wheels dbmigrate create table i18n_translations
 component {
 
     function up() {
-        createTable(name="i18n_translations", primaryKey="id") {
-            addColumn(type="integer", autoIncrement=true);
-            addColumn(name="locale", type="string", limit=10, null=false);
-            addColumn(name="translation_key", type="string", limit=255, null=false);
-            addColumn(name="translation_value", type="text", null=false);
-            addColumn(name="created_at", type="datetime");
-            addColumn(name="updated_at", type="datetime");
+        t = createTable(name = 'i18n_translations', force='false', id='true', primaryKey='id');
+        t.string(columnNames = 'locale', limit = '10', allowNull = false);
+        t.string(columnNames = 'translation_key', limit = '255', allowNull = false);
+        t.text(columnNames = 'translation_value', allowNull = false);
+        t.timestamps();
+        t.create();
 
-            addIndex(columns="locale,translation_key", unique=true);
-        }
+        addIndex(table="i18n_translations", columnNames="locale");
+        addIndex(table="i18n_translations", columnNames="translation_key");
     }
 
     function down() {
@@ -197,17 +196,37 @@ component {
 
 <p>Finally run:</p>
 <pre>
-wheels dbmigrate latest
+wheels dbmigrate up
 </pre>
 
 <p>That’s it — your database is ready for translation.</p>
 
 <hr>
 
-<h3>Step 3: Use It Anywhere</h3>
+<h3>Step 3: Add Insertions in the i18n_translations Table</h3>
+<p>Insert your keys in your database table according to your database to run your translation. here's a sample</p>
+<pre>
+INSERT INTO i18n_translations (locale, translation_key, translation_value, createdat, updatedat) VALUES
+('en', 'common.welcome', 'Welcome to our application', NOW(), NOW()),
+('en', 'common.greeting', 'Hello, {name}!', NOW(), NOW()),
+('en', 'common.goodbye', 'Goodbye', NOW(), NOW()),
+('en', 'common.posts.zero', 'No Post Found', NOW(), NOW()),
+('en', 'common.posts.one', '{count} Post Found', NOW(), NOW()),
+('en', 'common.posts.other', '{count} Posts Found', NOW(), NOW()),
+('es', 'common.welcome', 'Bienvenido a nuestra aplicación', NOW(), NOW()),
+('es', 'common.greeting', '¡Hola, {name}!', NOW(), NOW()),
+('es', 'common.goodbye', 'Adiós', NOW(), NOW()),
+('es', 'common.posts.zero', 'Ningún Post Encontrado', NOW(), NOW()),
+('es', 'common.posts.one', '{count} Post Encontrado', NOW(), NOW()),
+('es', 'common.posts.other', '{count} Posts Encontrados', NOW(), NOW());
+</pre>
+
+<p>This is MySQL queries, you can change it according to your database</p>
+
+<h3>Step 4: Use It Anywhere</h3>
 <pre>
 #t("common.welcome")#
-#t("common.hello", name="Sarah")#
+#t("common.greeting", name="Sarah")#
 #tp("common.posts", count=5)#
 </pre>
 

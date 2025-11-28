@@ -41,7 +41,6 @@ component hint="wheels-i18n" output="false" mixin="global" {
         local.appKey = application.wo.$appKey();
         // Initialize the service and store it in application scope
         application[local.appKey].i18n = createObject("component", "plugins.I18n.lib.LocalizationService").init(
-            availableLocales  = application.wo.get("i18n_availableLocales"),
             translationsPath    = application.wo.get("i18n_translationsPath"),
             availableLocales    = application.wo.get("i18n_availableLocales"),
             defaultLocale       = application.wo.get("i18n_defaultLocale"),

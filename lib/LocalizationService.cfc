@@ -55,22 +55,50 @@ component output="false" {
     private void function loadFromDatabase() {
         var locales = listToArray(variables.config.availableLocales);
 
+        // Generate parameter names :locale1,:locale2,:locale3
+        var namedParams = [];
+        for (var i = 1; i <= arrayLen(locales); i++) {
+            arrayAppend(namedParams, ":locale#i#");
+        }
+
+        // Join placeholders for SQL
+        var placeholders = arrayToList(namedParams, ",");
+
         var sql = "
             SELECT locale, translation_key, translation_value
             FROM i18n_translations
-            WHERE locale IN (?)
+            WHERE locale IN (#placeholders#)
         ";
 
-        var q = queryExecute(
-            sql,
-            [locales],
-            { datasource: application.$wheels.dataSourceName }
-        );
-
-        for (var row in q) {
-            variables.translations[row.locale] = variables.translations[row.locale] ?: {};
-            variables.translations[row.locale][row.translation_key] = row.translation_value;
+        // Build the param struct
+        var params = {};
+        for (var i = 1; i <= arrayLen(locales); i++) {
+            params["locale#i#"] = {
+                value = locales[i],
+                cfsqltype = "cf_sql_varchar"
+            };
         }
+
+        try {
+            local.appKey = application.wo.$appKey();
+            var q = queryExecute(
+                sql,
+                params,
+                { datasource = application[local.appKey].dataSourceName }
+            );
+
+            for (var row in q) {
+                variables.translations[row.locale] = variables.translations[row.locale] ?: {};
+                variables.translations[row.locale][row.translation_key] = row.translation_value;
+            }
+        } catch (any e) {
+            var isMissingTable = (
+                FindNoCase("Table", e.message) && FindNoCase("i18n_translations", e.message) && FindNoCase("doesn't exist", e.message)
+                || FindNoCase("relation", e.message) && FindNoCase("does not exist", e.message) // PostgreSQL
+                || FindNoCase("no such table", e.message) // SQLite
+            );
+        }
+        
     }
 
     public string function getTranslation(required string locale, required string key) {
@@ -106,13 +134,14 @@ component output="false" {
     public void function setTranslation(required string locale, required string key, required string value) {
         variables.translations[locale] = variables.translations[locale] ?: {};
         variables.translations[locale][key] = value;
+        local.appKey = application.wo.$appKey();
 
         queryExecute(
             "INSERT INTO i18n_translations (locale, translation_key, translation_value)
              VALUES (?, ?, ?)
              ON DUPLICATE KEY UPDATE translation_value = ?",
-            [locale, key, value, value],
-            { datasource: application.$wheels.dataSourceName }
+            {locale, key, value, value},
+            { datasource= application[local.appKey].dataSourceName }
         );
     }
 }
