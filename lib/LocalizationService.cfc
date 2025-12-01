@@ -129,19 +129,4 @@ component output="false" {
             }
         }
     }
-
-    // Optional: Allow live updates from admin panel
-    public void function setTranslation(required string locale, required string key, required string value) {
-        variables.translations[locale] = variables.translations[locale] ?: {};
-        variables.translations[locale][key] = value;
-        local.appKey = application.wo.$appKey();
-
-        queryExecute(
-            "INSERT INTO i18n_translations (locale, translation_key, translation_value)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE translation_value = ?",
-            {locale, key, value, value},
-            { datasource= application[local.appKey].dataSourceName }
-        );
-    }
 }

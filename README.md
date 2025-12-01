@@ -49,7 +49,7 @@ Below is a description of all available i18n configuration settings and their de
 | i18n_translationsPath | `/app/locales` | Path for JSON files (only used with json source) |
 | i18n_cacheTranslations | `false` | Cache translations in memory (recommended in prod) |
 
-Pro Tip: Always set i18n_cacheTranslations=true in production for maximum performance.
+Pro Tip: Set i18n_cacheTranslations=true in production for maximum performance.
 
 ### Step 2: Add Your First Translation
 
@@ -213,6 +213,13 @@ That’s it — your translators can now update text instantly.
 
 ___Many agencies love this workflow. You’re in full control — build it exactly how you want.___
 
+## Functions Provided
+
+- `t( key, [params])` – Translate a string by key
+- `tp( key, count, [params])` – Translate and pluralize key based on count.
+- `changeLocale( locale )` – Set active locale
+- `currentLocale()` – Get active locale
+- `availableLocales()` – Returns available locales
 
 ## Usage
 
@@ -249,14 +256,6 @@ current = currentLocale();
 ```cfml
 result = availableLocales("test");
 ```
-
-## Functions Provided
-
-- `t( key, [params])` – Translate a string by key
-- `tp( key, count, [params])` – Translate and pluralize key based on count.
-- `changeLocale( locale )` – Set active locale
-- `currentLocale()` – Get active locale
-- `availableLocales()` – Returns available locales
 
 ## License
 

@@ -309,7 +309,7 @@ locales = availableLocales(); // ["en", "es", "fr"]
 
 <hr>
 
-<p>This is the <strong>only i18n plugin</strong> you'll ever need for Wheels.</p>
+<p>This is the <strong>only i18n plugin</strong> you'll ever need for Wheels translation/localization.</p>
 
 <div class="highlight">
     Made with love by <strong>wheels-dev</strong><br>
