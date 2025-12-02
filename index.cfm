@@ -96,26 +96,26 @@ set(i18n_cacheTranslations=false); // Set to true in production
 <pre>
 {
   "welcome": "Welcome to my app!",
-  "hello": "Hello, {name}!",
+  "greeting": "Hello, {name}!",
   "save": "Save",
   "posts": {
     "zero": "No Post Found",
     "one": "{count} Post Found", 
     "other": "{count} Posts Found" 
-  },
+  }
 }
 </pre>
 <p>Same structure file for different language e.g: <code>/app/locales/es/common.json</code></p>
 <pre>
 {
   "welcome": "Bienvenido a nuestra aplicación",
-  "hello": "¡Hola, {name}!",
+  "greeting": "¡Hola, {name}!",
   "save": "Guardar",
   "posts": {
     "zero": "No se encontraron publicaciones",
     "one": "{count} publicación encontrada",
     "other": "{count} publicaciones encontradas"
-  },
+  }
 }
 </pre>
 
