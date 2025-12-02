@@ -57,16 +57,21 @@ Create this file: `/app/locales/en/common.json`
 
 ```json
 {
-  "welcome": "Welcome to our application",
+  "welcome": "Welcome to my app!",
   "greeting": "Hello, {name}!",
+  "save": "Save",
   "posts": {
     "zero": "No Post Found",
     "one": "{count} Post Found", 
     "other": "{count} Posts Found" 
   },
-  "buttons": {
-    "save": "Save",
-    "cancel": "Cancel"
+  "nav": {
+    "home": "Home",
+    "about": {
+        "service": "Service",
+        "portfolio": "Portfolio"
+    },
+    "contact": "Contact"
   }
 }
 ```
@@ -77,14 +82,19 @@ Same for different language: `/app/locales/es/common.json`
 {
   "welcome": "Bienvenido a nuestra aplicación",
   "greeting": "¡Hola, {name}!",
+  "save": "Guardar",
   "posts": {
     "zero": "No se encontraron publicaciones",
     "one": "{count} publicación encontrada",
     "other": "{count} publicaciones encontradas"
   },
-  "buttons": {
-    "save": "Guardar",
-    "cancel": "Cancelar",
+  "nav": {
+    "home": "Hogar",
+    "about": {
+        "service": "Servicio",
+        "portfolio": "Cartera"
+    },
+    "contact": "Contacto"
   }
 }
 ```
@@ -109,6 +119,7 @@ Your application should follow the following localization structure:
 ```cfml
 #t("common.welcome")#
 #t("common.greeting", name="Sarah")#
+#t("common.nav.about.service)#
 #tp("common.posts", count=5)#
 ```
 

@@ -28,7 +28,7 @@ component output="false" {
         }
     }
 
-    // Load from JSON files (your original logic)
+    // Load from JSON files
     private void function $loadFromJson() {
         var locales = listToArray(variables.config.availableLocales);
         var basePath = expandPath(variables.config.translationsPath);
@@ -116,7 +116,6 @@ component output="false" {
         return "";
     }
 
-    // Your original flatten helper
     private void function $flattenAndStore(required string locale, required string prefix, required struct data) {
         for (var key in data) {
             var fullKey = prefix & "." & key;

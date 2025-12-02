@@ -102,6 +102,14 @@ set(i18n_cacheTranslations=false); // Set to true in production
     "zero": "No Post Found",
     "one": "{count} Post Found", 
     "other": "{count} Posts Found" 
+  },
+  "nav": {
+    "home": "Home",
+    "about": {
+        "service": "Service",
+        "portfolio": "Portfolio"
+    },
+    "contact": "Contact"
   }
 }
 </pre>
@@ -115,6 +123,14 @@ set(i18n_cacheTranslations=false); // Set to true in production
     "zero": "No se encontraron publicaciones",
     "one": "{count} publicación encontrada",
     "other": "{count} publicaciones encontradas"
+  },
+  "nav": {
+    "home": "Hogar",
+    "about": {
+        "service": "Servicio",
+        "portfolio": "Cartera"
+    },
+    "contact": "Contacto"
   }
 }
 </pre>
@@ -136,6 +152,7 @@ set(i18n_cacheTranslations=false); // Set to true in production
 <pre>
 #t("common.welcome")#
 #t("common.greeting", name="Sarah")#
+#t("common.nav.about.service)#
 #tp("common.posts", count=5)#
 </pre>
 
