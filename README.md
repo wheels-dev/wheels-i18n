@@ -4,7 +4,7 @@
 
 Lightweight • Zero dependencies • JSON or Database backed • Built-in pluralization • Full fallback support
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zainforbjs/wheels-i18n/blob/main/LICENSE)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/wheels-dev/wheels-i18n/blob/main/LICENSE)
 [![Wheels 3+](https://img.shields.io/badge/Wheels-3%2B-brightgreen)](https://wheels.dev)
 
 ## Features

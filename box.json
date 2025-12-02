@@ -9,10 +9,10 @@
     "author": "wheels-dev",
     "directory":"/plugins/",
     "packageDirectory": "i18n",
-    "homepage": "https://github.com/zainforbjs/wheels-i18n",
-    "Bugs" : "https://github.com/zainforbjs/wheels-i18n/issues",
+    "homepage": "https://github.com/wheels-dev/wheels-i18n",
+    "Bugs" : "https://github.com/wheels-dev/wheels-i18n/issues",
     "Repository" : { 
         "type" : "git", 
-        "URL" : "https://github.com/zainforbjs/wheels-i18n"
+        "URL" : "https://github.com/wheels-dev/wheels-i18n"
     }
 }

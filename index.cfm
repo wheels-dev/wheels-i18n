@@ -314,5 +314,5 @@ locales = availableLocales(); // ["en", "es", "fr"]
 <div class="highlight">
     Made with love by <strong>wheels-dev</strong><br>
     MIT License • Works with Wheels 3.0+<br>
-    GitHub: <a href="https://github.com/zainforbjs/wheels-i18n">github.com/zainforbjs/wheels-i18n</a>
+    GitHub: <a href="https://github.com/wheels-dev/wheels-i18n">github.com/wheels-dev/wheels-i18n</a>
 </div>
