@@ -30,21 +30,24 @@ component output="false" {
 
     // Load from JSON files
     private void function $loadFromJson() {
-        var locales = listToArray(variables.config.availableLocales);
-        var basePath = expandPath(variables.config.translationsPath);
+        local.locales = listToArray(variables.config.availableLocales);
+        local.basePath = expandPath(variables.config.translationsPath);
 
-        for (var loc in locales) {
+        for (local.loc in locales) {
             variables.translations[loc] = {};
 
-            var localeDir = basePath & "/" & loc;
+            local.localeDir = basePath & "/" & loc;
             if (directoryExists(localeDir)) {
-                var files = directoryList(localeDir, false, "name", "*.json");
-                for (var file in files) {
-                    var content = fileRead(localeDir & "/" & file, "utf-8");
+                local.files = directoryList(localeDir, false, "name", "*.json");
+                for (local.file in files) {
+                    local.content = fileRead(localeDir & "/" & file, "utf-8");
                     if (isJSON(content)) {
-                        var data = deserializeJSON(content);
-                        var namespace = listFirst(file, ".");
+                        local.data = deserializeJSON(content);
+                        local.namespace = listFirst(file, ".");
                         $flattenAndStore(loc, namespace, data);
+                    } else {
+                        writeLog(text="i18n plugin: Failed to parse JSON file #localeDir#/#file#", type="error");
+                        return
                     }
                 }
             }
@@ -53,26 +56,26 @@ component output="false" {
 
     // Load from Database
     private void function $loadFromDatabase() {
-        var locales = listToArray(variables.config.availableLocales);
+        local.locales = listToArray(variables.config.availableLocales);
 
         // Generate parameter names :locale1,:locale2,:locale3
-        var namedParams = [];
-        for (var i = 1; i <= arrayLen(locales); i++) {
+        local.namedParams = [];
+        for (local.i = 1; i <= arrayLen(locales); i++) {
             arrayAppend(namedParams, ":locale#i#");
         }
 
         // Join placeholders for SQL
-        var placeholders = arrayToList(namedParams, ",");
+        local.placeholders = arrayToList(namedParams, ",");
 
-        var sql = "
+        local.sql = "
             SELECT locale, translation_key, translation_value
             FROM i18n_translations
             WHERE locale IN (#placeholders#)
         ";
 
         // Build the param struct
-        var params = {};
-        for (var i = 1; i <= arrayLen(locales); i++) {
+        local.params = {};
+        for (local.i = 1; i <= arrayLen(locales); i++) {
             params["locale#i#"] = {
                 value = locales[i],
                 cfsqltype = "cf_sql_varchar"
@@ -81,22 +84,29 @@ component output="false" {
 
         try {
             local.appKey = application.wo.$appKey();
-            var q = queryExecute(
+            local.q = queryExecute(
                 sql,
                 params,
                 { datasource = application[local.appKey].dataSourceName }
             );
 
-            for (var row in q) {
+            for (local.row in q) {
                 variables.translations[row.locale] = variables.translations[row.locale] ?: {};
                 variables.translations[row.locale][row.translation_key] = row.translation_value;
             }
         } catch (any e) {
-            var isMissingTable = (
-                FindNoCase("Table", e.message) && FindNoCase("i18n_translations", e.message) && FindNoCase("doesn't exist", e.message)
-                || FindNoCase("relation", e.message) && FindNoCase("does not exist", e.message) // PostgreSQL
-                || FindNoCase("no such table", e.message) // SQLite
+            local.isMissingTable = (
+                FindNoCase("Table", e.message) && FindNoCase("i18n_translations", e.message)
+                || ReFindNoCase("relation.*does not exist", e.message) // PG
             );
+
+            if (isMissingTable) {
+                writeLog(text="i18n plugin: Table 'i18n_translations' not found. Falling back to empty translations for DB source.", type="error");
+
+                // Ensure structure exists so app doesn't crash later
+                variables.translations = variables.translations ?: {};
+                return;
+            }
         }
         
     }
@@ -117,9 +127,9 @@ component output="false" {
     }
 
     private void function $flattenAndStore(required string locale, required string prefix, required struct data) {
-        for (var key in data) {
-            var fullKey = prefix & "." & key;
-            var value = data[key];
+        for (local.key in data) {
+            local.fullKey = prefix & "." & key;
+            local.value = data[key];
 
             if (isStruct(value)) {
                 $flattenAndStore(locale, fullKey, value);

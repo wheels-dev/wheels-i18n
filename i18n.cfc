@@ -60,7 +60,8 @@ component hint="wheels-i18n" output="false" mixin="global" {
     public string function t(required string key) {
         // 1. Determine Locale
         local.currentLocale = currentLocale();
-        local.i18nService = application.wheels.i18n;
+        local.appKey = application.wo.$appKey();
+        local.i18nService = application[local.appKey].i18n;
         
         // 2. Get Translation
         local.translation = local.i18nService.$getTranslation(local.currentLocale, arguments.key);
@@ -102,9 +103,10 @@ component hint="wheels-i18n" output="false" mixin="global" {
 		local.translationKey = arguments.key;
 
 		if (arguments.count == 0) {
+            // Use the explicit 'zero' key if count is 0
             local.translationKey = arguments.key & ".zero";
         } else if (arguments.count == 1) {
-            // Use the explicit 'zero' key if count is 0
+            // Use the 'one' key if count is 1
             local.translationKey = arguments.key & ".one";
         } else {
             // Use the 'other' key for all other counts (2, 3, 4, etc.)
