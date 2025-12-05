@@ -41,17 +41,13 @@ component output="false" {
                 local.files = directoryList(localeDir, false, "name", "*.json");
                 for (local.file in files) {
                     local.content = fileRead(localeDir & "/" & file, "utf-8");
-                    try{
-                        if (isJSON(content)) {
-                            local.data = deserializeJSON(content);
-                            local.namespace = listFirst(file, ".");
-                            $flattenAndStore(loc, namespace, data);
-                        }
-                    } catch (any e) {
-                        local.appKey = application.wo.$appKey();
-                        if (structKeyExists(application[local.appKey], "logError")) {
-                            application[local.appKey].logError("i18n plugin: Failed to parse JSON file #localeDir#/#file#: #e.message#");
-                        }
+                    if (isJSON(content)) {
+                        local.data = deserializeJSON(content);
+                        local.namespace = listFirst(file, ".");
+                        $flattenAndStore(loc, namespace, data);
+                    } else {
+                        writeLog(text="i18n plugin: Failed to parse JSON file #localeDir#/#file#", type="error");
+                        return
                     }
                 }
             }
@@ -101,16 +97,12 @@ component output="false" {
         } catch (any e) {
             local.isMissingTable = (
                 FindNoCase("Table", e.message) && FindNoCase("i18n_translations", e.message)
-                || FindNoCase("relation.*does not exist", e.message) // PG
-                || FindNoCase("no such table", e.message) // SQLite
+                || ReFindNoCase("relation.*does not exist", e.message) // PG
             );
 
             if (isMissingTable) {
-                // Optional: log via Wheels logger if available
-                local.appKey = application.wo.$appKey();
-                if (structKeyExists(application[local.appKey], "logError")) {
-                    application[local.appKey].logError("i18n plugin: Table 'i18n_translations' not found. Falling back to empty translations for DB source.");
-                }
+                writeLog(text="i18n plugin: Table 'i18n_translations' not found. Falling back to empty translations for DB source.", type="error");
+
                 // Ensure structure exists so app doesn't crash later
                 variables.translations = variables.translations ?: {};
                 return;
