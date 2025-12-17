@@ -1,6 +1,6 @@
 {
     "shortDescription": "Internationalization (i18n) plugin for Wheels",
-    "keywords": "cfwheels,wheels,plugin,translation,localization",
+    "keywords": "cfwheels,wheels,plugin,i18n,internationalization,localization,translation,multilingual",
     "private": false,
     "version": "1.0.0",
     "slug": "Wheels-i18n",
