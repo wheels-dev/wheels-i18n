@@ -17,7 +17,7 @@
     a:hover {text-decoration: underline;}
 </style>
 
-<h1>wheels-i18n v1.0.0</h1>
+<h1>Wheels i18n Plugin</h1>
 <p><strong>The simplest, fastest, and most powerful internationalization plugin for Wheels.</strong></p>
 
 <hr>
