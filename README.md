@@ -202,7 +202,7 @@ INSERT INTO i18n_translations (locale, translation_key, translation_value, creat
 ('es', 'common.posts.other', '{count} Posts Encontrados', NOW(), NOW());
 ```
 
-### Step 4: User It Anywhere
+### Step 4: Use It Anywhere
 
 ```cfml
 #t("common.welcome")#
