@@ -1,4 +1,4 @@
-# Wheels Internationalization Plugin
+# Wheels Internationalization(i18n)
 
 **The simplest, fastest, and most powerful internationalization (i18n) plugin for Wheels 3.x+**
 
