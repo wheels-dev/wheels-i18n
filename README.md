@@ -119,7 +119,7 @@ Your application should follow the following localization structure:
 ```cfml
 #t("common.welcome")#
 #t("common.greeting", name="Sarah")#
-#t("common.nav.about.service)#
+#t("common.nav.about.service")#
 #tp("common.posts", count=5)#
 ```
 
@@ -142,6 +142,28 @@ set(i18n_fallbackLocale="en");
 set(i18n_translationSource="database");
 set(i18n_cacheTranslations=false);
 ```
+
+___Optional:___ __Customize database table and column names if your schema differs.__
+
+``` cfml
+set(i18n_dbTable="i18n_translations");
+set(i18n_dbLocaleColumn="locale");
+set(i18n_dbKeyColumn="translation_key");
+set(i18n_dbValueColumn="translation_value");
+```
+
+### Database Options
+
+  Setting               Default               Description
+  --------------------- --------------------- -------------------
+  i18n_dbTable          `i18n_translations`   Translation table
+  i18n_dbLocaleColumn   `locale`              Locale column
+  i18n_dbKeyColumn      `translation_key`     Translation key
+  i18n_dbValueColumn    `translation_value`   Translation value
+
+------------------------------------------------------------------------
+
+___Note:___ __These settings are only used when `i18n_translationSource="database"`. If not defined, the plugin automatically uses the default values.__
 
 ### Step 2: Create the Translation Table
 
@@ -182,12 +204,25 @@ Then this command in CLI to run your migration:
 wheels dbmigrate up
 ```
 
+## Using a Custom Database Schema
+
+If your project already has a translations table, simply map it:
+```
+set(i18n_translationSource="database");
+set(i18n_dbTable="translations");
+set(i18n_dbLocaleColumn="lang");
+set(i18n_dbKeyColumn="key_name");
+set(i18n_dbValueColumn="value_text");
+```
+
+__No plugin code changes are required.__
+
 ### Step 3: Add Insertions in the i18n_translations Table
 
 Insert your translations keys according to your database to run your translation. here's a sample in MySQL
 
 ```
-INSERT INTO i18n_translations (locale, translation_key, translation_value, createdat, updatedat) VALUES
+INSERT INTO i18n_translations (locale, translation_key, translation_value, createdAt, updatedAt) VALUES
 ('en', 'common.welcome', 'Welcome to our application', NOW(), NOW()),
 ('en', 'common.greeting', 'Hello, {name}!', NOW(), NOW()),
 ('en', 'common.goodbye', 'Goodbye', NOW(), NOW()),
@@ -229,6 +264,10 @@ You can easily build your own admin area using standard Wheels tools:
 That’s it — your translators can now update text instantly.
 
 ___Many agencies love this workflow. You’re in full control — build it exactly how you want.___
+
+___Design Philosophy:___ __All configuration options have sensible defaults. You only need to configure what differs from your application. This keeps setup fast while remaining fully flexible.__
+
+<hr>
 
 ## Plugin Functions
 
