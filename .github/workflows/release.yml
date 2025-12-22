@@ -130,7 +130,7 @@ jobs:
       # - name: Publish All Packages to ForgeBox
       #   run: |
       #     # Publish stable release and mark as current/stable version
-      #     ./tools/build/scripts/publish-to-forgebox.sh "wheels-dev" "${{ secrets.FORGEBOX_PASS }}" "true" "true"
+      #     ./scripts/publish-to-forgebox.sh "wheels-dev" "${{ secrets.FORGEBOX_PASS }}" "true" "true"
 
       #############################################
       # Build Artifacts for GitHub
@@ -138,7 +138,7 @@ jobs:
 
       - name: Build All Wheels Artifacts
         run: |
-          ./tools/build/scripts/build-i18n.sh "${{ env.WHEELS_VERSION }}" "${{ env.BRANCH }}" "${{ github.run_number }}" "${{ env.WHEELS_PRERELEASE }}"
+          ./scripts/build-i18n.sh "${{ env.WHEELS_VERSION }}" "${{ env.BRANCH }}" "${{ github.run_number }}" "${{ env.WHEELS_PRERELEASE }}"
 
 
       - name: Upload Wheels I18N Artifact
