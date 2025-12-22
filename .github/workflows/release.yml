@@ -39,6 +39,8 @@ jobs:
 
       - name: Make build scripts executable
         run: |
+          sudo apt-get update && sudo apt-get install -y dos2unix
+          dos2unix scripts/*.sh
           chmod +x scripts/*.sh
           # List scripts for verification
           ls -la scripts/
