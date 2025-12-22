@@ -9,7 +9,12 @@ component output="false" {
         required string defaultLocale,
         required string fallbackLocale,
         required boolean cacheTranslations,
-        required string translationSource = "json"
+        required string translationSource = "json",
+        // DB config
+        string dbTable = "i18n_translations",
+        string dbLocaleColumn = "locale",
+        string dbKeyColumn = "translation_key",
+        string dbValueColumn = "translation_value"
     ) {
         variables.config = arguments;
         return this;
@@ -68,9 +73,12 @@ component output="false" {
         local.placeholders = arrayToList(namedParams, ",");
 
         local.sql = "
-            SELECT locale, translation_key, translation_value
-            FROM i18n_translations
-            WHERE locale IN (#placeholders#)
+            SELECT
+                #variables.config.dbLocaleColumn#   AS locale,
+                #variables.config.dbKeyColumn#      AS translation_key,
+                #variables.config.dbValueColumn#    AS translation_value
+            FROM #variables.config.dbTable#
+            WHERE #variables.config.dbLocaleColumn# IN (#placeholders#)
         ";
 
         // Build the param struct

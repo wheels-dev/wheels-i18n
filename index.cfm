@@ -70,7 +70,7 @@ set(i18n_cacheTranslations=false); // Set to true in production
         <tr>
             <td><strong>i18n_translationSource</strong></td>
             <td><code>"json"</code></td>
-            <td>The method that will be used for locales (<code>"json/database"</code>).</td>
+            <td>The source used to load translations (<code>"json"</code> or <code>"database"</code>).</td>
         </tr>
         <tr>
             <td><strong>i18n_translationsPath</strong></td>
@@ -152,7 +152,7 @@ set(i18n_cacheTranslations=false); // Set to true in production
 <pre>
 #t("common.welcome")#
 #t("common.greeting", name="Sarah")#
-#t("common.nav.about.service)#
+#t("common.nav.about.service")#
 #tp("common.posts", count=5)#
 </pre>
 
@@ -178,6 +178,57 @@ set(i18n_fallbackLocale="en");
 set(i18n_translationSource = "database");
 set(i18n_cacheTranslations=false); // Set to true in production
 </pre>
+
+<div class="note">
+    <strong>Optional:</strong> Customize database table and column names if your schema differs.
+</div>
+
+<pre>
+set(i18n_dbTable="i18n_translations");
+set(i18n_dbLocaleColumn="locale");
+set(i18n_dbKeyColumn="translation_key");
+set(i18n_dbValueColumn="translation_value");
+</pre>
+
+<h3>Database Configuration Options</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Setting Name</th>
+            <th>Default Value</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>i18n_dbTable</strong></td>
+            <td><code>"i18n_translations"</code></td>
+            <td>Name of the database table storing translations.</td>
+        </tr>
+        <tr>
+            <td><strong>i18n_dbLocaleColumn</strong></td>
+            <td><code>"locale"</code></td>
+            <td>Column name that stores locale codes (e.g. en, es).</td>
+        </tr>
+        <tr>
+            <td><strong>i18n_dbKeyColumn</strong></td>
+            <td><code>"translation_key"</code></td>
+            <td>Column that stores translation keys (e.g. common.welcome).</td>
+        </tr>
+        <tr>
+            <td><strong>i18n_dbValueColumn</strong></td>
+            <td><code>"translation_value"</code></td>
+            <td>Column that stores translated text.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note">
+    <strong>Note:</strong> These settings are only used when
+    <code>i18n_translationSource="database"</code>.
+    If not defined, the plugin automatically uses the default values.
+</div>
 
 <hr>
 
@@ -222,12 +273,26 @@ wheels dbmigrate up
 
 <p>That’s it — your database is ready for translation.</p>
 
+<h3>Using a Custom Database Schema</h3>
+
+<p>If your project already has a translations table, simply map it:</p>
+
+<pre>
+set(i18n_translationSource="database");
+set(i18n_dbTable="translations");
+set(i18n_dbLocaleColumn="lang");
+set(i18n_dbKeyColumn="key_name");
+set(i18n_dbValueColumn="value_text");
+</pre>
+
+<p>No plugin code changes are required.</p>
+
 <hr>
 
 <h3>Step 3: Add Insertions in the i18n_translations Table</h3>
 <p>Insert your translations keys according to your database to run your translation. here's a sample in MySQL</p>
 <pre>
-INSERT INTO i18n_translations (locale, translation_key, translation_value, createdat, updatedat) VALUES
+INSERT INTO i18n_translations (locale, translation_key, translation_value, createdAt, updatedAt) VALUES
 ('en', 'common.welcome', 'Welcome to our application', NOW(), NOW()),
 ('en', 'common.greeting', 'Hello, {name}!', NOW(), NOW()),
 ('en', 'common.goodbye', 'Goodbye', NOW(), NOW()),
@@ -271,6 +336,15 @@ INSERT INTO i18n_translations (locale, translation_key, translation_value, creat
 </ul>
 <p>That’s it — your translators can now update text instantly.</p>
 <p><em>Many agencies love this workflow. You’re in full control — build it exactly how you want.</em></p>
+
+<hr>
+
+<div class="pro">
+    <strong>Design Philosophy:</strong><br>
+    All configuration options have sensible defaults.
+    You only need to configure what differs from your application.
+    This keeps setup fast while remaining fully flexible.
+</div>
 
 <hr>
 

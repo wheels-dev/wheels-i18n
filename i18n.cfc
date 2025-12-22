@@ -34,6 +34,18 @@ component hint="wheels-i18n" output="false" mixin="global" {
         if (!structKeyExists(application[local.appKey], "i18n_cacheTranslations")) {
             application.wo.set(i18n_cacheTranslations=false);
         }
+        if (!structKeyExists(application[local.appKey], "i18n_dbTable")) {
+            application.wo.set(i18n_dbTable="i18n_translations");
+        }
+        if (!structKeyExists(application[local.appKey], "i18n_dbLocaleColumn")) {
+            application.wo.set(i18n_dbLocaleColumn="locale");
+        }
+        if (!structKeyExists(application[local.appKey], "i18n_dbKeyColumn")) {
+            application.wo.set(i18n_dbKeyColumn="translation_key");
+        }
+        if (!structKeyExists(application[local.appKey], "i18n_dbValueColumn")) {
+            application.wo.set(i18n_dbValueColumn="translation_value");
+        }
     }
 
     private function $loadService() {
@@ -46,7 +58,12 @@ component hint="wheels-i18n" output="false" mixin="global" {
             defaultLocale       = application.wo.get("i18n_defaultLocale"),
             fallbackLocale      = application.wo.get("i18n_fallbackLocale"),
             translationSource   = application.wo.get("i18n_translationSource"),
-            cacheTranslations   = application.wo.get("i18n_cacheTranslations")
+            cacheTranslations   = application.wo.get("i18n_cacheTranslations"),
+            // DB customization
+            dbTable               = application.wo.get("i18n_dbTable"),
+            dbLocaleColumn        = application.wo.get("i18n_dbLocaleColumn"),
+            dbKeyColumn           = application.wo.get("i18n_dbKeyColumn"),
+            dbValueColumn         = application.wo.get("i18n_dbValueColumn")
         );
 
         // Perform initial load of translation files
