@@ -39,6 +39,12 @@ mixin-target declarations. This release converts `wheels-i18n` to that format.
 - `scripts/build-i18n.sh`, `scripts/prepare-i18n.sh`,
   `scripts/publish-to-forgebox.sh` — ForgeBox is not used in 4.0; distribution
   is handled by the `wheels-dev/wheels-packages` registry.
+- `assets/translation-via-json.mp4`, `assets/translation-via-database.mp4`
+  — `.mp4` is not on the `wheels-packages` registry file-type allowlist
+  (`.cfc`, `.cfm`, `.md`, `.json`, `.js`, `.css`, `.sql`, `.yml`, etc.), so
+  keeping the videos in the tarball would block the mirror CI. Videos can be
+  re-attached as GitHub release assets on the `v2.0.0` release without
+  re-entering the tarball.
 
 ### Migration
 All user-visible APIs (`t()`, `tp()`, `currentLocale()`, `changeLocale()`,
