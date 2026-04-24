@@ -1,15 +1,15 @@
-# Wheels Internationalization(i18n)
+# wheels-i18n
 
-**The simplest, fastest, and most powerful internationalization (i18n) plugin for Wheels 3.x+**
+**The simplest, fastest, and most powerful internationalization package for Wheels 4.x+**
 
-• Lightweight 
-• Zero dependencies 
-• JSON or Database backed 
-• Built-in pluralization 
+• Lightweight
+• Zero dependencies
+• JSON or Database backed
+• Built-in pluralization
 • Full fallback support
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/wheels-dev/wheels-i18n/blob/main/LICENSE)
-[![Wheels 3+](https://img.shields.io/badge/Wheels-3%2B-brightgreen)](https://wheels.dev)
+[![Wheels 4+](https://img.shields.io/badge/Wheels-4%2B-brightgreen)](https://wheels.dev)
 
 ## Features
 
@@ -19,13 +19,28 @@
 - Session-based locale switching
 - Fallback locale & missing key handling
 - Optional in-memory caching (great for production)
-- Works anywhere in views, controllers, or models
+- Works in views and controllers (mixed into the `controller` target)
+
+## Requirements
+
+- Wheels 4.0+
+- Lucee 5+, Adobe ColdFusion 2018+, or BoxLang
 
 ## Installation
 
 ```bash
-wheels plugin install wheels-i18n
+wheels packages install wheels-i18n
 ```
+
+After installation the package lands in `vendor/wheels-i18n/` and auto-loads on the next application start. Run `wheels reload` (or hit `?reload=true&password=...`) to pick it up without a restart.
+
+### Upgrading from the 3.x plugin
+
+The 3.x plugin (installed under `plugins/i18n/`) is incompatible with Wheels 4.0's package system. To upgrade:
+
+1. Delete the old `plugins/i18n/` directory and any lingering `plugins/I18n/` folder.
+2. Run `wheels packages install wheels-i18n`.
+3. Your existing `config/settings.cfm` values (`i18n_defaultLocale`, etc.) and `app/locales/*.json` files continue to work unchanged.
 
 ## Translation via JSON File
 
@@ -167,7 +182,7 @@ set(i18n_dbValueColumn="translation_value");
 
 ------------------------------------------------------------------------
 
-___Note:___ __These settings are only used when `i18n_translationSource="database"`. If not defined, the plugin automatically uses the default values.__
+___Note:___ __These settings are only used when `i18n_translationSource="database"`. If not defined, the package automatically uses the default values.__
 
 ### Step 2: Create the Translation Table
 
@@ -219,7 +234,7 @@ set(i18n_dbKeyColumn="key_name");
 set(i18n_dbValueColumn="value_text");
 ```
 
-__No plugin code changes are required.__
+__No package code changes are required.__
 
 ### Step 3: Add Insertions in the i18n_translations Table
 
@@ -273,7 +288,7 @@ ___Design Philosophy:___ __All configuration options have sensible defaults. You
 
 <hr>
 
-## Plugin Functions
+## Package Functions
 
 - `#t("key")#` → Translate
 - `#t("key", name="[param]")#` → With variables

@@ -1,7 +1,22 @@
-component hint="wheels-i18n" output="false" mixin="global" {
+/**
+ * wheels-i18n — Wheels package for internationalization.
+ *
+ * Provides JSON-file or database-backed translations with parameter
+ * interpolation and pluralization. Mixin methods are injected into the
+ * controller target (which covers views, since Wheels views execute in
+ * the controller's variables scope).
+ *
+ * Mixin methods available in controllers and views:
+ *   t(key, [params...])             Translate a key to the current locale
+ *   tp(key, count, [params...])     Translate with pluralization (.zero/.one/.other)
+ *   currentLocale()                 Get the current locale from session or default
+ *   changeLocale(language)          Switch locale; returns false if not in availableLocales
+ *   availableLocales()              Array of configured locales
+ */
+component hint="wheels-i18n" output="false" mixin="controller" {
 
     public function init() {
-        this.version = "3.0.0";
+        this.version = "2.0.0";
 
         // 1. Set default configuration settings
         $setDefaultSettings();
@@ -12,8 +27,6 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     private function $setDefaultSettings() {
-        // Correct way: Check if the key exists in the global Wheels application scope
-        
         local.appKey = application.wo.$appKey();
 
         if (!structKeyExists(application[local.appKey], "i18n_defaultLocale")) {
@@ -49,21 +62,19 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     private function $loadService() {
-
         local.appKey = application.wo.$appKey();
         // Initialize the service and store it in application scope
-        application[local.appKey].i18n = createObject("component", "plugins.I18n.lib.LocalizationService").init(
+        application[local.appKey].i18n = createObject("component", "vendor.wheels-i18n.lib.LocalizationService").init(
             translationsPath    = application.wo.get("i18n_translationsPath"),
             availableLocales    = application.wo.get("i18n_availableLocales"),
             defaultLocale       = application.wo.get("i18n_defaultLocale"),
             fallbackLocale      = application.wo.get("i18n_fallbackLocale"),
             translationSource   = application.wo.get("i18n_translationSource"),
             cacheTranslations   = application.wo.get("i18n_cacheTranslations"),
-            // DB customization
-            dbTable               = application.wo.get("i18n_dbTable"),
-            dbLocaleColumn        = application.wo.get("i18n_dbLocaleColumn"),
-            dbKeyColumn           = application.wo.get("i18n_dbKeyColumn"),
-            dbValueColumn         = application.wo.get("i18n_dbValueColumn")
+            dbTable             = application.wo.get("i18n_dbTable"),
+            dbLocaleColumn      = application.wo.get("i18n_dbLocaleColumn"),
+            dbKeyColumn         = application.wo.get("i18n_dbKeyColumn"),
+            dbValueColumn       = application.wo.get("i18n_dbValueColumn")
         );
 
         // Perform initial load of translation files
@@ -71,37 +82,33 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     /**
-     * Translate a key to the current locale
+     * Translate a key to the current locale with parameter interpolation.
      * Usage: #t("common.welcome")# or #t(key="common.hello", name="John")#
      */
     public string function t(required string key) {
-        // 1. Determine Locale
         local.currentLocale = currentLocale();
         local.appKey = application.wo.$appKey();
         local.i18nService = application[local.appKey].i18n;
-        
-        // 2. Get Translation
+
         local.translation = local.i18nService.$getTranslation(local.currentLocale, arguments.key);
 
-        // 3. Fallback Logic
+        // Fallback to fallbackLocale if translation missing in current locale
         if (!len(local.translation)) {
             local.fallbackLocale = get("i18n_fallbackLocale");
-            // Only try fallback if it's different from current
             if (local.fallbackLocale != local.currentLocale) {
                 local.translation = local.i18nService.$getTranslation(local.fallbackLocale, arguments.key);
             }
         }
 
-        // 4. If still empty, return the key itself (easier for debugging)
+        // If still empty, return the key itself (debugging aid)
         if (!len(local.translation)) {
             return arguments.key;
         }
 
-        // 5. Parameter Interpolation (replacing {name} with arguments.name)
+        // Parameter interpolation (replace {name} with arguments.name)
         for (local.param in arguments) {
             if (local.param != "key") {
                 local.searchString = "{" & local.param & "}";
-                // Case-insensitive replacement
                 local.translation = replaceNoCase(local.translation, local.searchString, arguments[local.param], "all");
             }
         }
@@ -110,32 +117,28 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     /**
-     * Translate a key with pluralization support
+     * Translate a key with pluralization support.
      * Usage:
-     *   tp("inbox.messages", count=1)   → "1 message" or "1 mensaje"
-     *   tp("inbox.messages", count=5)   → "5 messages" or "5 mensajes"
+     *   tp("inbox.messages", count=0)   → .zero variant
+     *   tp("inbox.messages", count=1)   → .one variant
+     *   tp("inbox.messages", count=5)   → .other variant
      */
     public string function tp(required string key, required numeric count) {
-		local.arguments = duplicate(arguments);
-		local.translationKey = arguments.key;
+        local.arguments = duplicate(arguments);
 
-		if (arguments.count == 0) {
-            // Use the explicit 'zero' key if count is 0
-            local.translationKey = arguments.key & ".zero";
+        if (arguments.count == 0) {
+            local.arguments.key = arguments.key & ".zero";
         } else if (arguments.count == 1) {
-            // Use the 'one' key if count is 1
-            local.translationKey = arguments.key & ".one";
+            local.arguments.key = arguments.key & ".one";
         } else {
-            // Use the 'other' key for all other counts (2, 3, 4, etc.)
-            local.translationKey = arguments.key & ".other";
+            local.arguments.key = arguments.key & ".other";
         }
 
-		local.arguments.key = local.translationKey;
-		return t(argumentCollection=local.arguments);
-	}
+        return t(argumentCollection=local.arguments);
+    }
 
     /**
-     * Get current application locale from Session, or default if not set
+     * Get the current locale from session, or default if not set.
      */
     public string function currentLocale() {
         if (structKeyExists(session, "locale") && len(session.locale)) {
@@ -145,8 +148,8 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     /**
-     * Change application locale
-     * Returns true if successful, false if locale not supported
+     * Change the application locale. Returns true if successful, false if
+     * the requested language is not in the configured availableLocales list.
      */
     public boolean function changeLocale(required string language) {
         if (listFindNoCase(get("i18n_availableLocales"), arguments.language)) {
@@ -157,7 +160,7 @@ component hint="wheels-i18n" output="false" mixin="global" {
     }
 
     /**
-     * Get all available locales as an array
+     * Returns all configured available locales as an array.
      */
     public array function availableLocales() {
         return listToArray(get("i18n_availableLocales"));

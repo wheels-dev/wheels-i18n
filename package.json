@@ -1,0 +1,13 @@
+{
+    "name": "wheels-i18n",
+    "version": "2.0.0",
+    "author": "wheels-dev",
+    "description": "Internationalization (i18n) package for Wheels — JSON-file or database-backed translations with pluralization and parameter interpolation.",
+    "wheelsVersion": ">=4.0",
+    "provides": {
+        "mixins": "controller",
+        "services": [],
+        "middleware": []
+    },
+    "dependencies": {}
+}
