@@ -1,0 +1,18 @@
+{
+  "welcome": "Bienvenido a la aplicación de prueba",
+  "greeting": "¡Hola, {name}!",
+  "save": "Guardar",
+  "posts": {
+    "zero": "Ningún Post Encontrado",
+    "one": "{count} Post Encontrado",
+    "other": "{count} Posts Encontrados"
+  },
+  "nav": {
+    "home": "Hogar",
+    "about": {
+      "service": "Servicio",
+      "portfolio": "Cartera"
+    },
+    "contact": "Contacto"
+  }
+}

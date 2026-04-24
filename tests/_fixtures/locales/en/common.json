@@ -1,0 +1,18 @@
+{
+  "welcome": "Welcome to the test app",
+  "greeting": "Hello, {name}!",
+  "save": "Save",
+  "posts": {
+    "zero": "No Post Found",
+    "one": "{count} Post Found",
+    "other": "{count} Posts Found"
+  },
+  "nav": {
+    "home": "Home",
+    "about": {
+      "service": "Service",
+      "portfolio": "Portfolio"
+    },
+    "contact": "Contact"
+  }
+}
