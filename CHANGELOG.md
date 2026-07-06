@@ -30,7 +30,7 @@ mixin-target declarations. This release converts `wheels-i18n` to that format.
   `"vendor.wheels-i18n.lib.LocalizationService"`.
 - Bumped `this.version` to `"2.0.0"`.
 - Rewrote the installation section of `README.md` to document
-  `wheels packages install wheels-i18n` (was `wheels plugin install wheels-i18n`).
+  `wheels packages add wheels-i18n` (was `wheels plugin install wheels-i18n`).
 
 ### Removed
 - `box.json` (CommandBox / ForgeBox manifest — replaced by `package.json`).
@@ -51,7 +51,7 @@ All user-visible APIs (`t()`, `tp()`, `currentLocale()`, `changeLocale()`,
 `availableLocales()`) and configuration settings (`i18n_defaultLocale`,
 `i18n_translationSource`, etc.) are unchanged. Existing `app/locales/*.json`
 files and database translations continue to work without modification. To
-upgrade, delete `plugins/i18n/` and run `wheels packages install wheels-i18n`.
+upgrade, delete `plugins/i18n/` and run `wheels packages add wheels-i18n`.
 
 ## [1.0.0] — earlier
 

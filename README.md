@@ -29,7 +29,7 @@
 ## Installation
 
 ```bash
-wheels packages install wheels-i18n
+wheels packages add wheels-i18n
 ```
 
 After installation the package lands in `vendor/wheels-i18n/` and auto-loads on the next application start. Run `wheels reload` (or hit `?reload=true&password=...`) to pick it up without a restart.
@@ -39,7 +39,7 @@ After installation the package lands in `vendor/wheels-i18n/` and auto-loads on 
 The 3.x plugin (installed under `plugins/i18n/`) is incompatible with Wheels 4.0's package system. To upgrade:
 
 1. Delete the old `plugins/i18n/` directory and any lingering `plugins/I18n/` folder.
-2. Run `wheels packages install wheels-i18n`.
+2. Run `wheels packages add wheels-i18n`.
 3. Your existing `config/settings.cfm` values (`i18n_defaultLocale`, etc.) and `app/locales/*.json` files continue to work unchanged.
 
 ## Translation via JSON File
