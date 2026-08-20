@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Removed leftover ForgeBox/CommandBox `.github/workflows/release.yml`. The 4.0
+  conversion dropped `box.json` and `scripts/` in favor of `package.json`, but
+  the workflow still ran on every `main` push and failed at `cat box.json`.
+
 ## [2.0.0] — 2026-04-24
 
 ### Breaking — converted to Wheels 4.0 package format
